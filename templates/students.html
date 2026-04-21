@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WassupChat — Student Directory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg:      #0b141a;
+            --panel:   #111b21;
+            --card:    #202c33;
+            --input:   #2a3942;
+            --green:   #00a884;
+            --green2:  #008069;
+            --text-1:  #e9edef;
+            --text-2:  #8696a0;
+            --text-3:  #667781;
+            --border:  #2a3942;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-1); min-height: 100vh; }
+
+        header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.9rem 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 0.7rem; }
+        .logo-icon { font-size: 1.4rem; }
+        .logo h1 { font-size: 1.1rem; font-weight: 600; }
+        .logo span { font-size: 0.8rem; color: var(--green); font-weight: 500; }
+        .back-btn {
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { color: var(--text-1); border-color: var(--green); }
+
+        .main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        /* Stats row */
+        .stats { display: flex; gap: 1rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            flex: 1; min-width: 160px;
+        }
+        .stat-card .label { font-size: 0.72rem; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.4rem; }
+        .stat-card .value { font-size: 1.6rem; font-weight: 700; color: var(--green); }
+        .stat-card .sub   { font-size: 0.78rem; color: var(--text-3); margin-top: 0.2rem; }
+
+        /* Search + count */
+        .toolbar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+        .search-box {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: var(--input); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.55rem 1rem; flex: 1;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus-within { border-color: var(--green); }
+        .search-box input {
+            flex: 1; background: none; border: none; color: var(--text-1);
+            font-size: 0.9rem; font-family: inherit; outline: none;
+        }
+        .search-box input::placeholder { color: var(--text-3); }
+        .count-badge {
+            background: rgba(0,168,132,0.15); border: 1px solid rgba(0,168,132,0.3);
+            color: var(--green); font-size: 0.8rem; font-weight: 600;
+            padding: 0.4rem 0.9rem; border-radius: 8px; white-space: nowrap;
+        }
+
+        /* Table */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: var(--panel);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-2);
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr { border-bottom: 1px solid rgba(42,57,66,0.5); transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.03); }
+        tbody td { padding: 0.75rem 1rem; font-size: 0.88rem; vertical-align: middle; }
+
+        .id-cell { color: var(--text-3); font-size: 0.8rem; width: 48px; }
+        .avatar-cell { width: 48px; }
+
+        .s-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 600; color: #fff;
+        }
+        .name-cell { font-weight: 500; color: var(--text-1); }
+        .phone-cell { color: var(--text-2); font-size: 0.83rem; }
+        .email-cell { color: var(--green); font-size: 0.83rem; }
+        .course-badge {
+            display: inline-block;
+            background: rgba(0,168,132,0.12);
+            border: 1px solid rgba(0,168,132,0.25);
+            color: var(--green);
+            font-size: 0.72rem; font-weight: 600;
+            padding: 0.2rem 0.55rem; border-radius: 6px;
+        }
+        .year-badge {
+            background: rgba(83,189,235,0.12);
+            border: 1px solid rgba(83,189,235,0.25);
+            color: #53bdeb;
+            font-size: 0.72rem; font-weight: 600;
+            padding: 0.2rem 0.55rem; border-radius: 6px; display: inline-block;
+        }
+
+        /* Empty */
+        .no-results { text-align: center; padding: 3rem 1rem; color: var(--text-3); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <span class="logo-icon">🎓</span>
+        <div>
+            <h1>Student Directory</h1>
+            <span>CSE-AIML · 1st Year</span>
+        </div>
+    </div>
+    <a href="/" class="back-btn">← Back to Chat</a>
+</header>
+
+<main class="main">
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="label">Total Students</div>
+            <div class="value" id="stat-total">—</div>
+            <div class="sub">CSE-AIML 1st Year</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Course</div>
+            <div class="value" style="font-size:1.1rem;padding-top:0.3rem;">CSE-AIML</div>
+            <div class="sub">Computer Science & AI/ML</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Year</div>
+            <div class="value">1st</div>
+            <div class="sub">Academic Year 2025–26</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Database</div>
+            <div class="value" style="font-size:0.95rem;padding-top:0.3rem;color:#53bdeb;">SQLite / SQL</div>
+            <div class="sub">Via SQLAlchemy ORM</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="#8696a0" d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.185 5.185 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"/></svg>
+            <input type="text" id="search" placeholder="Search by name, phone, or email…">
+        </div>
+        <div class="count-badge" id="count-badge">20 students</div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th class="id-cell">#</th>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+        <div class="no-results hidden" id="no-results">No students match your search.</div>
+    </div>
+
+</main>
+
+<script>
+const COLORS = ['#00a884','#53bdeb','#f0b429','#e06c75','#c678dd','#56b6c2','#e5c07b','#61afef'];
+function avatarColor(name) {
+    let h = 0;
+    for (let c of name) h = c.charCodeAt(0) + ((h << 5) - h);
+    return COLORS[Math.abs(h) % COLORS.length];
+}
+function initial(name) { return name.trim().charAt(0).toUpperCase(); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+let allStudents = [];
+
+async function load(q = '') {
+    const url = q ? `/api/students?q=${encodeURIComponent(q)}` : '/api/students';
+    const res  = await fetch(url);
+    const data = await res.json();
+    return data.students;
+}
+
+function render(students) {
+    const tbody   = document.getElementById('tbody');
+    const noRes   = document.getElementById('no-results');
+    const badge   = document.getElementById('count-badge');
+    const statTot = document.getElementById('stat-total');
+
+    badge.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
+    if (!document.getElementById('search').value) statTot.textContent = students.length;
+
+    if (students.length === 0) {
+        tbody.innerHTML = '';
+        noRes.classList.remove('hidden');
+        return;
+    }
+    noRes.classList.add('hidden');
+
+    tbody.innerHTML = students.map(s => `
+        <tr>
+            <td class="id-cell">${s.id}</td>
+            <td class="avatar-cell">
+                <div class="s-avatar" style="background:${avatarColor(s.name)}">${initial(s.name)}</div>
+            </td>
+            <td class="name-cell">${esc(s.name)}</td>
+            <td class="phone-cell">${esc(s.phone)}</td>
+            <td class="email-cell">${esc(s.email)}</td>
+            <td><span class="course-badge">${esc(s.course)}</span></td>
+            <td><span class="year-badge">${esc(s.year)}</span></td>
+        </tr>`).join('');
+}
+
+// Search with debounce
+let debounce;
+document.getElementById('search').addEventListener('input', async e => {
+    clearTimeout(debounce);
+    debounce = setTimeout(async () => {
+        const students = await load(e.target.value.trim());
+        render(students);
+    }, 250);
+});
+
+// Initial load
+(async () => {
+    allStudents = await load();
+    render(allStudents);
+})();
+</script>
+</body>
+</html>

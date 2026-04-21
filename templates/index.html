@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WassupChat — WhatsApp Style</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════ JOIN SCREEN ══════════════ -->
+<div class="join-screen" id="join-screen">
+    <div class="join-card">
+        <div class="wa-logo">
+            <svg viewBox="0 0 175.216 175.552" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+                <path d="M87.6 0C39.2 0 0 39.2 0 87.6c0 15.5 4.1 30.2 11.2 43L0 175.6l47-12.3c12.3 6.5 26.1 10.2 40.6 10.2 48.4 0 87.6-39.2 87.6-87.6C175.2 39.2 136 0 87.6 0z" fill="#00a884"/>
+                <path d="M87.6 16c-39.5 0-71.6 32.1-71.6 71.6 0 13.2 3.6 25.6 9.9 36.3L20 145l22.3-7.3c10.1 5.6 21.7 8.9 34.2 9 37.6 0 68.2-30.6 68.2-68.2C144.7 40.9 117 16 87.6 16z" fill="#fff"/>
+                <path d="M65.5 49.8c-1.9-4.3-4-4.4-5.9-4.5-1.5-.1-3.3-.1-5-.1-1.7 0-4.5.6-6.9 3.2-2.4 2.6-9.1 8.9-9.1 21.7s9.3 25.2 10.6 26.9c1.3 1.7 18.1 28.6 44.8 39 22.2 8.8 26.7 7 31.5 6.6 4.8-.4 15.5-6.3 17.7-12.5 2.2-6.1 2.2-11.4 1.5-12.5-.7-1.1-2.4-1.7-5-3s-15.5-7.7-17.9-8.5c-2.4-.9-4.1-.9-5.9 1.7-1.7 2.6-6.7 8.5-8.2 10.3-1.5 1.7-3 2-5.6.7-2.6-1.3-11-4.1-20.9-13-7.7-6.9-12.9-15.5-14.4-18.1-1.5-2.6-.2-4 1.1-5.3 1.2-1.2 2.6-3 3.9-4.6 1.3-1.5 1.7-2.6 2.6-4.3.9-1.7.4-3.2-.2-4.6-.6-1.2-5.7-14-7.7-19.1z" fill="#00a884"/>
+            </svg>
+        </div>
+        <h1>WassupChat</h1>
+        <p class="join-sub">Use WassupChat on your computer</p>
+
+        <div class="join-fields">
+            <div class="field-wrap">
+                <input type="text" id="username-input" placeholder="Your name" maxlength="24" autocomplete="off">
+            </div>
+            <div class="field-wrap">
+                <input type="text" id="phone-input" placeholder="Phone / ID  (optional)" maxlength="20" autocomplete="off">
+            </div>
+        </div>
+        <button id="join-btn">Get Started</button>
+    </div>
+</div>
+
+<!-- ══════════════ MAIN APP ══════════════ -->
+<div class="wa-app hidden" id="app">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+        <!-- Profile Header -->
+        <div class="lp-header">
+            <div class="my-avatar" id="my-avatar"></div>
+            <div class="lp-icons">
+                <a href="/students" class="icon-btn" title="Student Directory" style="color: inherit; text-decoration: none;">
+                    <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                </a>
+                <button class="icon-btn" title="New chat">
+                    <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"/></svg>
+                </button>
+                <button class="icon-btn" title="More">
+                    <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-bar">
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" width="17" height="17"><path fill="#8696a0" d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.185 5.185 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"/></svg>
+                <input type="text" id="search-input" placeholder="Search or start new chat">
+            </div>
+        </div>
+
+        <!-- Chat List -->
+        <div class="chat-list" id="chat-list">
+            <!-- injected by JS -->
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel" id="right-panel">
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">
+                <svg viewBox="0 0 303 172" width="220"><path d="M229.565 160.229c32.647-10.984 57.366-33.607 57.366-63.465C286.931 43.431 233.15 0 167.35 0c-65.8 0-119.581 43.431-119.581 96.764 0 53.332 53.781 96.763 119.581 96.763 14.516 0 28.386-1.981 41.197-5.624l44.617 29.155-23.599-56.829z" fill="#364147"/><path d="M.765 170.357c25.998-8.748 45.673-26.765 45.673-50.58C46.438 78.86 24.518 46.43 0 46.43c-24.518 0-46.438 32.43-46.438 73.347 0 26.895 12.954 50.358 32.4 63.048z" fill="#364147" opacity=".2"/></svg>
+            </div>
+            <h2>WassupChat for Web</h2>
+            <p>Send and receive messages without keeping your phone online.</p>
+        </div>
+
+        <!-- Conversation (hidden until room selected) -->
+        <div class="conversation hidden" id="conversation">
+
+            <!-- Chat Header -->
+            <div class="chat-header" id="chat-header">
+                <div class="ch-left">
+                    <div class="contact-avatar" id="chat-avatar"></div>
+                    <div class="ch-info">
+                        <span class="ch-name" id="chat-name"></span>
+                        <span class="ch-status" id="chat-status">online</span>
+                    </div>
+                </div>
+                <div class="ch-right">
+                    <button class="icon-btn">
+                        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.185 5.185 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"/></svg>
+                    </button>
+                    <button class="icon-btn">
+                        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages-wrap" id="messages"></div>
+
+            <!-- Typing -->
+            <div class="typing-bar hidden" id="typing-bar">
+                <span id="typing-text">typing...</span>
+            </div>
+
+            <!-- Input -->
+            <div class="msg-input-bar">
+                <button class="icon-btn emoji-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#8696a0" d="M9.153 11.603c.795 0 1.44-.88 1.44-1.962s-.645-1.96-1.44-1.96c-.795 0-1.44.878-1.44 1.96s.645 1.962 1.44 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.218 6.066 0 6.037-4.952 6.011-5.218H5.949zm11.144 1.49c-.6 1.144-2.003 2.325-5.093 2.325-3.06 0-4.464-1.181-5.071-2.325h10.164zm2.532-1.49H5.65c-.026-.307-.131 5.218 6.063 5.218 6.066 0 6.037-4.952 6.011-5.218h.901zm-1.838-1.362c.795 0 1.44-.88 1.44-1.962s-.645-1.96-1.44-1.96c-.795 0-1.44.878-1.44 1.96s.645 1.962 1.44 1.962zM12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm0 20c-4.971 0-9-4.029-9-9s4.029-9 9-9 9 4.029 9 9-4.029 9-9 9z"/></svg>
+                </button>
+                <button class="icon-btn attach-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#8696a0" d="M1.816 15.556v.002c0 1.502.584 2.912 1.646 3.972s2.472 1.647 3.974 1.647a5.58 5.58 0 0 0 3.972-1.645l9.547-9.548c.769-.768 1.147-1.767 1.058-2.817-.079-.968-.548-1.927-1.319-2.698-1.594-1.592-4.068-1.711-5.517-.262l-7.916 7.915c-.881.881-.792 2.25.214 3.261.959.958 2.423 1.053 3.263.215l5.511-5.512c.28-.28.267-.722.053-.936l-.244-.244c-.191-.191-.567-.349-.957.04l-5.506 5.506c-.18.18-.635.127-.976-.214-.098-.097-.576-.613-.213-.973l7.915-7.915c.818-.817 2.267-.699 3.23.262.5.501.802 1.1.849 1.685.051.573-.156 1.111-.589 1.543l-9.547 9.549a3.97 3.97 0 0 1-2.829 1.171 3.975 3.975 0 0 1-2.83-1.173 3.973 3.973 0 0 1-1.172-2.828c0-1.071.415-2.076 1.172-2.83l7.209-7.211c.157-.157.264-.579.028-.814L11.5 4.36a.572.572 0 0 0-.834.018L3.458 11.79a5.573 5.573 0 0 0-1.642 3.766z"/></svg>
+                </button>
+                <div class="text-input-wrap">
+                    <input type="text" id="message-input" placeholder="Type a message" autocomplete="off" maxlength="1000">
+                </div>
+                <button class="send-btn" id="send-btn">
+                    <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
