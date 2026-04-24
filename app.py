@@ -122,5 +122,20 @@ def handle_typing(data):
     room = data.get('room', 'general')
     emit('typing', {'username': data.get('username'), 'room': room}, to=room, include_self=False)
 
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    msg_id = data.get('id')
+    username = data.get('username')
+    room = data.get('room')
+    
+    if msg_id:
+        msg = Message.query.get(msg_id)
+        # Ensure the user deleting it is the one who sent it
+        if msg and msg.username == username:
+            with app.app_context():
+                db.session.delete(msg)
+                db.session.commit()
+            emit('message_deleted', {'id': msg_id, 'room': room}, to=room)
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)

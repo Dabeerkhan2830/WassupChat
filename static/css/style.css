@@ -350,6 +350,24 @@ input  { font-family: inherit; }
     padding: 0 0.1rem;
 }
 
+/* Delete Button */
+.delete-btn {
+    display: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--wa-text-2);
+    margin-right: 4px;
+    padding: 0 2px;
+}
+.delete-btn:hover { color: #e06c75; }
+.bubble.out:hover .delete-btn { display: inline-block; }
+
+/* Deleted Message Style */
+.deleted-message {
+    font-style: italic;
+    color: var(--wa-text-2);
+}
+
 /* Timestamp + ticks */
 .bubble-meta {
     display: flex; align-items: center; justify-content: flex-end; gap: 3px;

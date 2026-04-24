@@ -266,6 +266,22 @@ socket.on('typing', data => {
     window._typingHide = setTimeout(() => typingBar.classList.add('hidden'), 2800);
 });
 
+socket.on('message_deleted', data => {
+    const bubbleGroup = document.getElementById(`msg-${data.id}`);
+    if (bubbleGroup) {
+        const bubble = bubbleGroup.querySelector('.bubble');
+        if (bubble) {
+            bubble.innerHTML = '<span class="deleted-message">🚫 This message was deleted</span>';
+        }
+    }
+});
+
+window.deleteMessage = function(id, room) {
+    if (confirm('Delete this message for everyone?')) {
+        socket.emit('delete_message', { id: id, username: me, room: room });
+    }
+};
+
 // ── RENDER BUBBLE ─────────────────────────
 function renderBubble(msg, animate) {
     const isMe  = (msg.username === me);
@@ -278,6 +294,7 @@ function renderBubble(msg, animate) {
 
     const group = document.createElement('div');
     group.className = `bubble-group ${dir}`;
+    group.id = `msg-${msg.id}`;
 
     // Sender name (only for incoming, first in chain)
     const nameHTML = (!isMe && isFirst)
@@ -292,11 +309,14 @@ function renderBubble(msg, animate) {
             </svg>
         </span>` : '';
 
+    const deleteBtnHTML = isMe ? `<span class="delete-btn" onclick="deleteMessage(${msg.id}, '${msg.room || currentRoom}')" title="Delete message">🗑️</span>` : '';
+
     group.innerHTML = `
         ${nameHTML}
         <div class="bubble ${dir}${isFirst ? ` first-${dir}` : ''}">
             ${escapeHTML(msg.content)}
             <div class="bubble-meta">
+                ${deleteBtnHTML}
                 <span class="bubble-time">${ts}</span>
                 ${ticksHTML}
             </div>
