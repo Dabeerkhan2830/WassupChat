@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn instance to serve WassupChat
+After=network.target
+
+[Service]
+User=azureuser
+Group=www-data
+WorkingDirectory=/home/azureuser/Eco10_project
+Environment="PATH=/home/azureuser/Eco10_project/venv/bin"
+EnvironmentFile=/home/azureuser/Eco10_project/.env
+ExecStart=/home/azureuser/Eco10_project/venv/bin/gunicorn --config gunicorn.conf.py app:app
+
+[Install]
+WantedBy=multi-user.target
